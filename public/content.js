@@ -71,44 +71,69 @@ scrapCurrentPage = (index) => {
       }
 
       //phones
+      // try {
+      //   if (card.querySelectorAll("div[data-sncf='1']").item(0)) {
+      //     const text = card
+      //       .querySelectorAll("div[data-sncf='1']")
+      //       .item(0).innerText;
+
+      //     const phones = new libphonenumber.findPhoneNumbersInText(text, "US");
+      //     console.log("phones:", JSON.stringify(phones));
+
+      //     data.phone = phones
+      //       .map((x) => (x.number ? x.number.number : ""))
+      //       .join(",");
+
+      //     // const regexp = new RegExp("\\+?\\(?\\d*\\)? ?\\(?\\d+\\)?\\d*([\\s./-]?\\d{2,})+","g");
+      //     // const phone_numbers = [...text.matchAll(regexp)];
+
+      //     // var phones = [];
+      //     // for (const match of phone_numbers) {
+      //     //   //document.write(match[0]);
+      //     //   //document.write('<br />');
+      //     //   phones.push(match[0].match(/([0-9]+)/gi));
+      //     // }
+
+      //     // data.phone =  phones.join(",");
+      //   }
+      // } catch (e) {
+      //   data.phone = "";
+      //   console.log("Error: Phone", e);
+      // }
+      // Extract phone numbers using RegExp if libphonenumber fails
+      // try {
+      //   let phoneNumbers = card.innerText.match(/\+?\(?\d{1,4}\)?[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{3,4}/g);
+      //   data.phone = phoneNumbers ? phoneNumbers.join(",") : "";
+      // } catch (e) {
+      //   data.phone = "";
+      //   console.log("Error: Phone", e);
+      // }
+      // Extract phone numbers using RegExp if libphonenumber fails
       try {
-        if (card.querySelectorAll("div[data-sncf='1']").item(0)) {
-          const text = card
-            .querySelectorAll("div[data-sncf='1']")
-            .item(0).innerText;
-
-          const phones = new libphonenumber.findPhoneNumbersInText(text, "US");
-          console.log("phones:", JSON.stringify(phones));
-
-          data.phone = phones
-            .map((x) => (x.number ? x.number.number : ""))
-            .join(",");
-
-          // const regexp = new RegExp("\\+?\\(?\\d*\\)? ?\\(?\\d+\\)?\\d*([\\s./-]?\\d{2,})+","g");
-          // const phone_numbers = [...text.matchAll(regexp)];
-
-          // var phones = [];
-          // for (const match of phone_numbers) {
-          //   //document.write(match[0]);
-          //   //document.write('<br />');
-          //   phones.push(match[0].match(/([0-9]+)/gi));
-          // }
-
-          // data.phone =  phones.join(",");
-        }
+        let phoneNumbers = card.innerText.match(/\+?\(?\d{1,4}\)?[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{3,4}/g);
+        data.phone = phoneNumbers ? phoneNumbers.join(",") : "";
       } catch (e) {
         data.phone = "";
         console.log("Error: Phone", e);
       }
 
-      //email
+
+
+      // //email
+      // try {
+      //   if (card.querySelectorAll("div[data-sncf='1']").item(0)) {
+      //     const emails = card.innerText.match(
+      //       /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi
+      //     );
+      //     data.email = emails.join(",");
+      //   }
+      // } catch (e) {
+      //   data.email = "";
+      //   console.log("Error: Email", e);
+      // }
       try {
-        if (card.querySelectorAll("div[data-sncf='1']").item(0)) {
-          const emails = card.innerText.match(
-            /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi
-          );
-          data.email = emails.join(",");
-        }
+        let emails = card.innerText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g);
+        data.email = emails ? emails.join(",") : "";
       } catch (e) {
         data.email = "";
         console.log("Error: Email", e);

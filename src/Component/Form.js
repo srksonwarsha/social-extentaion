@@ -886,7 +886,10 @@ const FormComponent = () => {
                   {selectedTabId === "data" && (
                     <div style={{ padding: 12 }}>
                       {Object.keys(scrapData).length === 0 ? (
-                        <Text type="warning">{t("noDataFound")}</Text>
+                       <div style={{ display: 'flex', justifyContent: 'center' }}>
+                       <Text type="warning">{t("noDataFound")}</Text>
+                     </div>
+                     
                       ) : (
                         <>
                           <Select
