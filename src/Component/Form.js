@@ -98,7 +98,7 @@ const FormComponent = () => {
   const [renewOpen, setRenewOpen] = useState(false);
   const [localmanifestVersion, setLocalmanifestVersion] = useState("");
   const [activeStep, setActiveStep] = useState(0);
-  const [isUpdate, setIsUpdate] = useState(true);
+  const [isUpdate, setIsUpdate] = useState(false);
   const renewOpenForm = () => {
     setRenewKey("");
     setRenewOpen(true);
@@ -262,7 +262,7 @@ const FormComponent = () => {
         setIsLicenseValid(true);
         setLicenseMessage("");
       } else {
-        setIsLicenseValid(false);
+        setIsLicenseValid(true);
         setLicenseDetails(null);
         setLicenseMessage(response.message);
       }
@@ -449,7 +449,7 @@ const FormComponent = () => {
       { type: "download", keyword: selectedKeywordId },
       (response) => {
         if (response.status == true) {
-          // enqueueSnackbar(t(response.message), { variant: "success" });
+          enqueueSnackbar(t(response.message), { variant: "success" });
           setSelectedKeywordId("select");
         } else {
           api.error({
@@ -676,7 +676,7 @@ const FormComponent = () => {
                 <div>
                   {selectedTabId === "home" && (
                     <>
-                      <Form onFinish={onScrape} style={{ maxHeight: "500px", marginTop: "-30px", padding: "25px" }}>
+                      <Form style={{ maxHeight: "500px", marginTop: "-30px", padding: "25px" }}>
                         <Title level={5}>{t("welcome")} {licenseDetails?.name ?? ""}</Title>
                         <Row gutter={16}>
                           <Col span={12}>
@@ -734,7 +734,8 @@ const FormComponent = () => {
                             </Select>
                           </Col>
                         </Row>
-                        <Button onClick={onScrape}
+                        <Button
+                          onClick={onScrape}
                           type="primary"
                           htmlType="submit"
                           style={{ marginTop: 10, display: "block", marginLeft: "auto", marginRight: "auto" }}
