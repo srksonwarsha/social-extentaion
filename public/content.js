@@ -26,11 +26,11 @@ scrollToCard = (index) => {
   console.log("scrollToCard:", index);
   return new Promise((t, l) => {
     try {
-      const item = document.querySelectorAll(".resultbox")[index];
+      const item = document.querySelectorAll(".MjjYud")[index];
 
       item.scrollIntoView({
         behavior: "smooth",
-        block: "center",
+        block: "end",
         inline: "nearest",
       });
 
@@ -58,7 +58,7 @@ scrapCurrentPage = (index) => {
   let data = {};
   return new Promise((resolve, reject) => {
     try {
-      const card = document.querySelectorAll(".srKDX")[index];
+      const card = document.querySelectorAll(".MjjYud")[index];
 
       //if (card.querySelectorAll(".yuRUbf").length > 0) {
       //title
@@ -242,7 +242,7 @@ startScraping = (startIndex, keyword, setting) => {
   console.log("startScraping start: ", startIndex);
 
   return new Promise(async (resolve, reject) => {
-    let items = document.querySelectorAll(".srKDX");
+    let items = document.querySelectorAll(".MjjYud");
 
     const totalCards = items.length;
 
@@ -251,18 +251,19 @@ startScraping = (startIndex, keyword, setting) => {
 
       //var keywordData = [];
 
-      const arr = range(startIndex, totalCards - 1);
-      console.log("arr:", JSON.stringify(arr));
-      await asyncForEach(arr, async (i, index) => {
-        //for (let i = startIndex; i < totalCards; i++) {
-        //const scrollCardSuccess = await scrollToCard(i);
-        //await timeout((setting.delay ?? 1) * 1000);
+      // const arr = range(startIndex, totalCards - 1);
+      // console.log("arr:", JSON.stringify(arr));
+      // await asyncForEach(arr, async (i, index) => {
+      //for (let i = startIndex; i < totalCards; i++) {
+      //const scrollCardSuccess = await scrollToCard(i);
+      //await timeout((setting.delay ?? 1) * 1000);
 
-        //scroll
+      //scroll
+      for (let i = startIndex; i < totalCards; i++) {
         try {
           items[i].scrollIntoView({
             behavior: "smooth",
-            block: "center",
+            block: "end",
             inline: "nearest",
           });
         } catch (e) {
@@ -284,7 +285,8 @@ startScraping = (startIndex, keyword, setting) => {
             totalCards
           );
         }
-      });
+      }
+      // });
 
       //await insertItem(keyword, keywordData);
 
@@ -364,7 +366,7 @@ startScraping = (startIndex, keyword, setting) => {
             await timeout((setting.delay ?? 1) * 1000);
 
             isTotalSame =
-              document.querySelectorAll(".srKDX").length === scrapingIndex;
+              document.querySelectorAll(".MjjYud").length === scrapingIndex;
           } else {
             console.log("data not found");
             isDone = true;

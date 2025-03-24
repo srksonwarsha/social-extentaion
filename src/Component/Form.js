@@ -361,8 +361,7 @@ const FormComponent = () => {
     }
   }
 
-  const onActivateSubmit = async (values) => {
-
+  const onActivateSubmit = async (e) => {
 
     const msg = {
       name: name,
@@ -373,21 +372,18 @@ const FormComponent = () => {
       key: key,
     };
 
-
-
-    console.log("msg: ", values);
-    console.log("activation start");
-
-
-    sendChromeMessage({ data: values, type: "license_active" }, (response) => {
-
+    sendChromeMessage({ data: msg, type: "license_active" }, (response) => {
       if (response.status == true) {
         setIsLicenseValid(true);
-        getLicenseDetails()
-        // enqueueSnackbar(t(response.message), { variant: "success" });
+        getLicenseDetails();
+        api.success({
+          key: "success",
+          message: t(response.message),
+          duration: 2,
+          placement: "bottomLeft",
+        })
       } else {
-        setIsLicenseValid(true);
-        // enqueueSnackbar(t(response.message));
+        setIsLicenseValid(false);
         api.error({
           key: "error",
           message: t(response.message),
@@ -477,7 +473,7 @@ const FormComponent = () => {
       { type: "download", keyword: selectedKeywordId },
       (response) => {
         if (response.status == true) {
-          // enqueueSnackbar(t(response.message), { variant: "success" });
+          enqueueSnackbar(t(response.message), { variant: "success" });
           setSelectedKeywordId("select");
         } else {
           api.error({
@@ -714,7 +710,7 @@ const FormComponent = () => {
                 <div>
                   {selectedTabId === "home" && (
                     <>
-                      <Form onFinish={onScrape} style={{ maxHeight: "500px", marginTop: "-30px", padding: "25px" }}>
+                      <Form style={{ maxHeight: "500px", marginTop: "-30px", padding: "25px" }}>
                         <Title level={5}>{t("welcome")} {licenseDetails?.name ?? ""}</Title>
                         <Row gutter={16}>
                           <Col span={12}>
@@ -772,7 +768,8 @@ const FormComponent = () => {
                             </Select>
                           </Col>
                         </Row>
-                        <Button onClick={onScrape}
+                        <Button
+                          onClick={onScrape}
                           type="primary"
                           htmlType="submit"
                           style={{ marginTop: 10, display: "block", marginLeft: "auto", marginRight: "auto" }}
@@ -1044,13 +1041,11 @@ const FormComponent = () => {
                 form={form}
                 style={{ padding: 12, maxWidth: 400, margin: "0 auto" }}
                 layout="vertical"
-                onFinish={() => {
-                  form.validateFields().then(onActivateSubmit);
-                }} // Handles form submission
+                onFinish={onActivateSubmit} // Handles form submission
               >
                 {/* Name */}
                 <Form.Item name="name" rules={[{ required: true, message: t("nameRequired") }]}>
-                  <Input prefix={<VscAccount style={{ fontSize: "1.2rem" }} />} placeholder={t("enterName")} />
+                  <Input value={name}  onChange={(e) => setName(e.target.value)} prefix={<VscAccount style={{ fontSize: "1.2rem" }} />} placeholder={t("enterName")} />
                 </Form.Item>
 
                 {/* Email */}
@@ -1061,26 +1056,28 @@ const FormComponent = () => {
                     { type: "email", message: t("emailInvalid") }
                   ]}
                 >
-                  <Input prefix={<MailOutlined />} placeholder={t("enterEmail")} />
+                  <Input value={email} onChange={(e) => setEmail(e.target.value)} prefix={<MailOutlined />} placeholder={t("enterEmail")} />
                 </Form.Item>
 
                 {/* Phone */}
                 <Form.Item name="phone" rules={[{ required: true, message: t("phoneRequired") }]}>
-                  <PhoneInput country={"in"} inputStyle={{ width: "100%" }} />
+                  <PhoneInput value={phone} onChange={(phone) => setPhone(phone)} country={"in"} inputStyle={{ width: "100%" }} />
                 </Form.Item>
 
                 {/* City */}
                 <Form.Item name="city" rules={[{ required: true, message: t("cityRequired") }]}>
-                  <Input prefix={<IoHomeOutline style={{ fontSize: "1.2rem" }} />} placeholder={t("enterCity")} />
+                  <Input value={city} onChange={(e) => setCity(e.target.value)} prefix={<IoHomeOutline style={{ fontSize: "1.2rem" }} />} placeholder={t("enterCity")} />
                 </Form.Item>
 
                 {/* Country */}
                 <Form.Item name="country" rules={[{ required: true, message: t("selectCountry") }]}>
                   {/* <IoLocationOutline style={{ fontSize: "1.2rem" }} /> */}
 
-                  <Select prefix={<IoLocationOutline style={{ fontSize: "1.2rem" }} />} placeholder={t("selectCountry")} showSearch>
+                  <Select value={country}  onChange={(value) => setCountry(value)} prefix={<IoLocationOutline style={{ fontSize: "1.2rem" }} />} placeholder={t("selectCountry")} showSearch>
                     {countryList.map((x) => (
-                      <Option key={x.countryCode} value={x.countryNameEn}>
+                      <Option key={x.countryCode}
+                      value={x.countryNameEn}
+                      label={x.countryNameEn}>
                         {x.countryNameEn}
                       </Option>
                     ))}
@@ -1093,17 +1090,9 @@ const FormComponent = () => {
                   name="key"
                   rules={[
                     { required: true, message: t("enterLicenseKey") },
-                    () => ({
-                      validator(_, value) {
-                        if (!value || keyIsValid) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(new Error(licenceKeyErrorMessage));
-                      },
-                    }),
                   ]}
                 >
-                  <Input prefix={<MdKey style={{ fontSize: "1.2rem" }} />} suffix={keyIsValid ? <CheckCircleOutlined /> : <CloseCircleOutlined />} placeholder={t("enterLicenseKey")} />
+                  <Input value={key} onChange={(e) => setKey(e.target.value)} prefix={<MdKey style={{ fontSize: "1.2rem" }} />} suffix={keyIsValid ? <CheckCircleOutlined /> : <CloseCircleOutlined />} placeholder={t("enterLicenseKey")} />
                 </Form.Item>
 
                 {/* Get Trial */}
