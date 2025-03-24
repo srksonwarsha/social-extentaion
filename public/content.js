@@ -58,7 +58,7 @@ scrapCurrentPage = (index) => {
   let data = {};
   return new Promise((resolve, reject) => {
     try {
-      const card = document.querySelectorAll(".g")[index];
+      const card = document.querySelectorAll(".srKDX")[index];
 
       //if (card.querySelectorAll(".yuRUbf").length > 0) {
       //title
@@ -217,7 +217,7 @@ startScraping = (startIndex, keyword, setting) => {
   console.log("startScraping start: ", startIndex);
 
   return new Promise(async (resolve, reject) => {
-    let items = document.querySelectorAll(".g");
+    let items = document.querySelectorAll(".srKDX");
 
     const totalCards = items.length;
 
@@ -339,7 +339,7 @@ startScraping = (startIndex, keyword, setting) => {
             await timeout((setting.delay ?? 1) * 1000);
 
             isTotalSame =
-              document.querySelectorAll(".g").length === scrapingIndex;
+              document.querySelectorAll(".srKDX").length === scrapingIndex;
           } else {
             console.log("data not found");
             isDone = true;

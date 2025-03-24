@@ -44,6 +44,7 @@ const { Option } = Select;
 const { TabPane } = Tabs;
 const { Step } = Steps;
 import { useTheme } from "@emotion/react";
+// import { truncate } from "fs";
 
 const ITEM_HEIGHT = 36;
 const MOBILE_ITEM_HEIGHT = 48;
@@ -66,7 +67,7 @@ const FormComponent = () => {
     },
   });
   const themeslider = useTheme();
-  const { enqueueSnackbar } = useSnackbar();
+  // const { enqueueSnackbar } = useSnackbar();
   const [isLoading, setIsLoading] = useState(true);
   const [product, setProduct] = useState(null);
   const [setting, setSetting] = useState(null);
@@ -98,7 +99,7 @@ const FormComponent = () => {
   const [renewOpen, setRenewOpen] = useState(false);
   const [localmanifestVersion, setLocalmanifestVersion] = useState("");
   const [activeStep, setActiveStep] = useState(0);
-  const [isUpdate, setIsUpdate] = useState(true);
+  const [isUpdate, setIsUpdate] = useState(false);
   const renewOpenForm = () => {
     setRenewKey("");
     setRenewOpen(true);
@@ -243,14 +244,26 @@ const FormComponent = () => {
     sendChromeMessage(
       { key: licenseDetails.key, renew_key: renewKey, type: "renew" },
       (response) => {
-        if (response.status == true) {
-          enqueueSnackbar(response.message, { variant: "success" });
+
+        if (response.status === true) {
+          api.success({
+            key: "success",
+            message: t(response.message),
+            duration: 2,
+            placement: "bottomLeft",
+          })
           setTimeout(() => {
             renewCloseForm();
           }, 500);
         } else {
-          enqueueSnackbar(t(response.message), { variant: "error" });
+          api.error({
+            key: "error",
+            message: t(response.message),
+            duration: 2,
+            placement: "bottomLeft",
+          })
         }
+
       }
     );
   };
@@ -262,7 +275,7 @@ const FormComponent = () => {
         setIsLicenseValid(true);
         setLicenseMessage("");
       } else {
-        setIsLicenseValid(false);
+        setIsLicenseValid(true);
         setLicenseDetails(null);
         setLicenseMessage(response.message);
       }
@@ -373,7 +386,7 @@ const FormComponent = () => {
         getLicenseDetails()
         // enqueueSnackbar(t(response.message), { variant: "success" });
       } else {
-        setIsLicenseValid(false);
+        setIsLicenseValid(true);
         // enqueueSnackbar(t(response.message));
         api.error({
           key: "error",
@@ -418,11 +431,16 @@ const FormComponent = () => {
   const onScrape = (e) => {
     e.preventDefault();
     setShowValidation(true);
-    if (keyword == "") {
-      return enqueueSnackbar(t("keywordIsRequired"));
+
+    if (keyword === "") {
+      api.error({
+        key: "error",
+        message: t(response.message),
+        duration: 2,
+        placement: "bottomLeft",
+      })
+      return;
     }
-
-
     console.log("countryCode:", countryCode);
 
     const countryDialCode = "+" + countryList.find(
@@ -436,10 +454,20 @@ const FormComponent = () => {
       country: countryDialCode,
       type: "scrap"
     }, (response) => {
-      if (response.status == true) {
-        enqueueSnackbar(t(response.message), { variant: "success" });
+      if (response.status === true) {
+        api.success({
+          key: "success",
+          message: t(response.message),
+          duration: 2,
+          placement: "bottomLeft",
+        })
       } else {
-        enqueueSnackbar(t(response.message));
+        api.error({
+          key: "error",
+          message: t(response.message),
+          duration: 2,
+          placement: "bottomLeft",
+        })
       }
     });
   };
@@ -534,12 +562,22 @@ const FormComponent = () => {
   const getTrial = () => {
     sendChromeMessage({ type: "get_trial" }, (response) => {
       console.log("get one day trial demo", response)
+      setKey(response.key);
+
       if (response.status) {
-        setKey(response.key)
-        enqueueSnackbar(response.message, { variant: "success" });
+        api.success({
+          key: "success",
+          message: t(response.message),
+          duration: 2,
+          placement: "bottomLeft",
+        })
       } else {
-        setKey(response.key)
-        enqueueSnackbar(response.message, { variant: "error" });
+        api.error({
+          key: "error",
+          message: t(response.message),
+          duration: 2,
+          placement: "bottomLeft",
+        })
       }
 
     })
@@ -620,7 +658,7 @@ const FormComponent = () => {
           <Paragraph>{t("subscription1M")}</Paragraph>
         </Modal>
 
-        <div style={{ backgroundColor: theme.token.colorPrimary, padding: 12, opacity: 0.9, height: "70px" }}>
+        <div style={{ backgroundColor: theme.token.colorPrimary, padding: 12, opacity: 0.9, height: "80px" }}>
           <Space align="center" style={{ width: "100%", display: "flex", justifyContent: "center" }}>
             <img src={logo} alt={product?.name ?? ""} style={{ width: 45, height: 45 }} />
             <Title level={4} style={{ color: "white", margin: 0 }}>
@@ -656,7 +694,7 @@ const FormComponent = () => {
                     <img src={product?.updateBannerUrl ?? ""} alt="" style={{ width: "100%" }} />
                   </a> */}
                 </Modal>
-                <div style={{ backgroundColor: "rgb(24, 29, 59)", padding: "8px 16px" }}>
+                <div style={{ backgroundColor: "rgb(24, 29, 59)", padding: "8px 0px" }}>
                   <Row justify="center" align="middle">
                     {TAB_ITEMS.map((x, i) => (
                       <Col span={6} key={"tab-" + i} style={{ textAlign: "center" }}>
@@ -780,7 +818,9 @@ const FormComponent = () => {
                                     <img
                                       src={get_youtube_thumbnail(product.demoVideoUrl, "high")}
                                       alt="YouTube Video"
-                                      style={{ height: 200, maxWidth: 350, width: "100%", display: "flex", alignItems: "center" }}
+                                      style={{
+                                        height: 200, maxWidth: 350, width: "100%", display: "flex", alignItems: "center", marginTop: "-30px"
+                                      }}
                                     />
                                   </Typography.Link>
                                 )}
