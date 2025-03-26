@@ -241,32 +241,37 @@ const FormComponent = () => {
   };
 
   const renewLicenseKey = () => {
-    sendChromeMessage(
-      { key: licenseDetails.key, renew_key: renewKey, type: "renew" },
-      (response) => {
-
-        if (response.status === true) {
-          api.success({
-            key: "success",
-            message: t(response.message),
-            duration: 2,
-            placement: "bottomLeft",
-          })
-          setTimeout(() => {
-            renewCloseForm();
-          }, 500);
-        } else {
-          api.error({
-            key: "error",
-            message: t(response.message),
-            duration: 2,
-            placement: "bottomLeft",
-          })
-        }
-
+    console.log("renewLicenseKey function called!"); // Debugging step
+    
+    let renewKeyData = {
+      key: licenseDetails?.key ?? '',
+      renew_key: renewKey
+    };
+  
+    console.log("Sending message:", { renew_key: renewKeyData, type: "renew" }); // Debugging step
+  
+    sendChromeMessage({ renew_key: renewKeyData, type: "renew" }, (response) => {
+      console.log("Response received:", response); // Debugging step
+  
+      if (response?.status === true) {
+        api.success({
+          key: "success",
+          message: response.message,
+          duration: 2,
+          placement: "bottomLeft",
+        });
+        setTimeout(() => renewCloseForm(), 500);
+      } else {
+        api.error({
+          key: "error",
+          message: response.message,
+          duration: 2,
+          placement: "bottomLeft",
+        });
       }
-    );
+    });
   };
+  
 
   const getLicenseDetails = () => {
     sendChromeMessage({ type: "get_details" }, (response) => {
@@ -306,22 +311,13 @@ const FormComponent = () => {
   }, []);
 
   useEffect(() => {
-    var color = "#0855a4";
-
-    if (product) {
-      color = product.color;
-    }
-
-    if (rData.theme_setting) {
-      if (rData.theme_setting["primary-color"]) {
-        color = rData.theme_setting["primary-color"];
-      }
-    }
-
+    let color = "#0855a4";
+    if (product) color = product.color;
+    if (rData.theme_setting?.["primary-color"]) color = rData.theme_setting["primary-color"];
     setTheme({
       token: {
         colorPrimary: color,
-        fontFamily: font,
+        fontFamily: "'Poppins', sans-serif",
       },
     });
   }, [product, rData]);
@@ -331,7 +327,6 @@ const FormComponent = () => {
       setTimeout(() => setShowValidation(false), 2000);
     }
   }, [showValidation]);
-
   // useEffect(() => {
 
   //   if(licenseDetails){
@@ -629,7 +624,7 @@ const FormComponent = () => {
           open={renewOpen}
           onCancel={renewCloseForm}
           footer={[
-            <Button key="renew" type="primary" onClick={renewLicenseKey}>
+            <Button color="#000" key="renew" type="primary" onClick={renewLicenseKey}>
               {t("renew")}
             </Button>,
             product && rData?.active_shop && (
@@ -686,11 +681,11 @@ const FormComponent = () => {
                   footer={null}
                   closable={!product?.forceUpdate}
                 >
-                  {/* <a href={product?.updateUrl ?? ""} target="_blank" rel="noopener noreferrer">
+                  <a href={product?.updateUrl ?? ""} target="_blank" rel="noopener noreferrer">
                     <img src={product?.updateBannerUrl ?? ""} alt="" style={{ width: "100%" }} />
-                  </a> */}
+                  </a>
                 </Modal>
-                <div style={{ backgroundColor: "rgb(24, 29, 59)", padding: "8px 0px" }}>
+                <div style={{  backgroundColor: theme.token.colorPrimary, padding: "8px 0px" }}>
                   <Row justify="center" align="middle">
                     {TAB_ITEMS.map((x, i) => (
                       <Col span={6} key={"tab-" + i} style={{ textAlign: "center" }}>
@@ -883,10 +878,10 @@ const FormComponent = () => {
                   {selectedTabId === "data" && (
                     <div style={{ padding: 12 }}>
                       {Object.keys(scrapData).length === 0 ? (
-                       <div style={{ display: 'flex', justifyContent: 'center' }}>
-                       <Text type="warning">{t("noDataFound")}</Text>
-                     </div>
-                     
+                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                          <Text type="warning">{t("noDataFound")}</Text>
+                        </div>
+
                       ) : (
                         <>
                           <Select
